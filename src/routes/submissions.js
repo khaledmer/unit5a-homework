@@ -13,6 +13,19 @@ const submitLimiter = rateLimit({
 
 router.post('/', submitLimiter, async (req, res) => {
   try {
+    // ---- Deadline check: this is the real enforcement point. The student ----
+    // ---- page also disables the button client-side, but that's just UX;  ----
+    // ---- a determined student could re-enable it with devtools, so the   ----
+    // ---- authoritative check has to live here on the server.            ----
+    const { rows: settingsRows } = await pool.query('SELECT deadline_at FROM settings WHERE id = 1');
+    const deadlineAt = settingsRows[0] && settingsRows[0].deadline_at;
+    if (deadlineAt && new Date() > new Date(deadlineAt)) {
+      return res.status(403).json({
+        error: 'The deadline for this assignment has passed. Submissions are no longer accepted.',
+        deadlinePassed: true,
+      });
+    }
+
     const { studentName, ex1Answers, ex2Answers, writtenExpression } = req.body || {};
 
     if (!studentName || typeof studentName !== 'string' || !studentName.trim()) {

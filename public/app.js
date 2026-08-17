@@ -156,8 +156,34 @@
     setTimeout(() => toast.remove(), 6000);
   }
 
+  // ---------- deadline ----------
+  // Client-side only: disables the button and shows a clear message. The
+  // actual block that can't be bypassed lives server-side in
+  // POST /api/submissions, since a student could otherwise just re-enable
+  // the button via devtools.
+  function isPastDeadline() {
+    const deadlineAt = exercises && exercises.settings && exercises.settings.deadlineAt;
+    return !!deadlineAt && new Date() > new Date(deadlineAt);
+  }
+
+  function applyDeadlineState() {
+    const btn = document.getElementById('submitBtn');
+    const chip = document.querySelector('.deadline-chip');
+    if (isPastDeadline()) {
+      btn.disabled = true;
+      btn.textContent = 'Deadline Passed';
+      if (chip) chip.classList.add('deadline-closed');
+    }
+  }
+
   // ---------- submit ----------
   async function submitHomework() {
+    if (isPastDeadline()) {
+      showToast('The deadline has passed. Submissions are no longer accepted.', 'error');
+      applyDeadlineState();
+      return;
+    }
+
     const nameInput = document.getElementById('studentName');
     state.studentName = nameInput.value.trim();
     if (!state.studentName) {
@@ -182,15 +208,22 @@
         }),
       });
       const data = await res.json();
-      if (!res.ok) throw new Error(data.error || 'Submission failed');
+      if (!res.ok) {
+        // Deadline could have passed between page load and click — the
+        // server is the source of truth, so reflect that back to the UI too.
+        if (data.deadlinePassed) applyDeadlineState();
+        throw new Error(data.error || 'Submission failed');
+      }
 
       clearDraft();
       showToast('Homework submitted successfully. Your teacher will send graded results separately.', 'success');
       btn.textContent = 'Submitted ✓';
     } catch (err) {
       showToast(err.message, 'error');
-      btn.disabled = false;
-      btn.textContent = 'Submit Homework';
+      if (!isPastDeadline()) {
+        btn.disabled = false;
+        btn.textContent = 'Submit Homework';
+      }
     }
   }
 
@@ -243,6 +276,7 @@
       renderEx1();
       renderEx2();
       renderWritten();
+      applyDeadlineState();
     } catch (err) {
       showToast('Could not load the assignment. Please refresh the page.', 'error');
     }

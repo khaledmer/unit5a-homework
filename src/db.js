@@ -35,12 +35,16 @@ CREATE TABLE IF NOT EXISTS settings (
   timer_enabled  BOOLEAN NOT NULL DEFAULT false,
   timer_minutes  INTEGER NOT NULL DEFAULT 30,
   deadline_text  TEXT NOT NULL DEFAULT 'Thursday at Midnight',
+  deadline_at    TIMESTAMPTZ,
   CONSTRAINT single_row CHECK (id = 1)
 );
 
 INSERT INTO settings (id, timer_enabled, timer_minutes, deadline_text)
 VALUES (1, false, 30, 'Thursday at Midnight')
 ON CONFLICT (id) DO NOTHING;
+
+-- Safe to re-run: adds the column for databases created before this feature existed.
+ALTER TABLE settings ADD COLUMN IF NOT EXISTS deadline_at TIMESTAMPTZ;
 `;
 
 async function initSchema() {

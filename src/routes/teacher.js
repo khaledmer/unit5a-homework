@@ -136,14 +136,32 @@ router.get('/settings', requireAuth, async (req, res) => {
 });
 
 router.post('/settings', requireAuth, async (req, res) => {
-  const { timerEnabled, timerMinutes, deadlineText } = req.body || {};
+  const { timerEnabled, timerMinutes, deadlineText, deadlineAt, clearDeadline } = req.body || {};
+
+  // deadlineAt: ISO string to set an enforced cutoff. clearDeadline: true to
+  // remove it (reopens submissions with no cutoff). Without either, the
+  // existing deadline_at is left untouched.
+  let newDeadlineAt = null;
+  if (deadlineAt) {
+    const parsed = new Date(deadlineAt);
+    if (isNaN(parsed.getTime())) {
+      return res.status(400).json({ error: 'Invalid deadlineAt value.' });
+    }
+    newDeadlineAt = parsed.toISOString();
+  }
+
   const { rows } = await pool.query(
     `UPDATE settings SET
        timer_enabled = COALESCE($1, timer_enabled),
        timer_minutes = COALESCE($2, timer_minutes),
-       deadline_text = COALESCE($3, deadline_text)
+       deadline_text = COALESCE($3, deadline_text),
+       deadline_at = CASE
+         WHEN $4::boolean THEN NULL
+         WHEN $5::timestamptz IS NOT NULL THEN $5::timestamptz
+         ELSE deadline_at
+       END
      WHERE id = 1 RETURNING *`,
-    [timerEnabled ?? null, timerMinutes ?? null, deadlineText ?? null]
+    [timerEnabled ?? null, timerMinutes ?? null, deadlineText ?? null, !!clearDeadline, newDeadlineAt]
   );
   res.json(rows[0]);
 });

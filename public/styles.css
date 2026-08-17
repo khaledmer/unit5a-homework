@@ -113,6 +113,13 @@ a { color: var(--event); }
   margin-bottom: 28px;
 }
 .deadline-chip .dot { width: 6px; height: 6px; border-radius: 50%; background: #f0958f; }
+.deadline-chip.deadline-closed {
+  background: rgba(224, 97, 91, 0.22);
+  border-color: rgba(224, 97, 91, 0.6);
+  color: #ff6b61;
+  font-weight: 700;
+}
+.deadline-chip.deadline-closed .dot { background: #ff6b61; }
 
 /* timeline diagram */
 .timeline-rail {

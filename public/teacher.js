@@ -30,23 +30,67 @@
   }
 
   // ---------- settings ----------
+
+  // datetime-local wants "YYYY-MM-DDTHH:mm" in *local* browser time with no
+  // timezone offset. Converting via toISOString() first would shift it to
+  // UTC and show the wrong time back to the teacher, so build the local
+  // string by hand instead.
+  function toDatetimeLocalValue(isoString) {
+    if (!isoString) return '';
+    const d = new Date(isoString);
+    const pad = (n) => String(n).padStart(2, '0');
+    return `${d.getFullYear()}-${pad(d.getMonth() + 1)}-${pad(d.getDate())}T${pad(d.getHours())}:${pad(d.getMinutes())}`;
+  }
+
+  function updateDeadlineStatus(isoString) {
+    const el = document.getElementById('deadlineStatus');
+    if (!isoString) {
+      el.textContent = 'No cutoff set — students can submit any time.';
+      return;
+    }
+    const passed = new Date() > new Date(isoString);
+    el.textContent = passed
+      ? `Cutoff passed (${new Date(isoString).toLocaleString()}) — submissions are currently blocked.`
+      : `Submissions will be blocked after ${new Date(isoString).toLocaleString()}.`;
+  }
+
   async function loadSettings() {
     const s = await api('/api/teacher/settings');
     document.getElementById('timerToggle').checked = s.timer_enabled;
     document.getElementById('timerMinutes').value = String(s.timer_minutes);
     document.getElementById('deadlineTextInput').value = s.deadline_text;
+    document.getElementById('deadlineAtInput').value = toDatetimeLocalValue(s.deadline_at);
+    updateDeadlineStatus(s.deadline_at);
   }
+
+  document.getElementById('clearDeadlineBtn').addEventListener('click', async () => {
+    try {
+      const s = await api('/api/teacher/settings', {
+        method: 'POST',
+        body: JSON.stringify({ clearDeadline: true }),
+      });
+      document.getElementById('deadlineAtInput').value = '';
+      updateDeadlineStatus(s.deadline_at);
+      showToast('Cutoff cleared — submissions reopened.', 'success');
+    } catch (err) {
+      showToast(err.message, 'error');
+    }
+  });
 
   document.getElementById('saveSettingsBtn').addEventListener('click', async () => {
     try {
-      await api('/api/teacher/settings', {
+      const deadlineAtLocal = document.getElementById('deadlineAtInput').value; // "" or "YYYY-MM-DDTHH:mm"
+      const s = await api('/api/teacher/settings', {
         method: 'POST',
         body: JSON.stringify({
           timerEnabled: document.getElementById('timerToggle').checked,
           timerMinutes: parseInt(document.getElementById('timerMinutes').value, 10),
           deadlineText: document.getElementById('deadlineTextInput').value,
+          // new Date() parses "YYYY-MM-DDTHH:mm" as local time, which is what we want.
+          deadlineAt: deadlineAtLocal ? new Date(deadlineAtLocal).toISOString() : undefined,
         }),
       });
+      updateDeadlineStatus(s.deadline_at);
       showToast('Settings saved.', 'success');
     } catch (err) {
       showToast(err.message, 'error');
