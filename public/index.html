@@ -1,0 +1,87 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<title>Unit 5A — Narrative Past Tenses | Homework</title>
+<link rel="stylesheet" href="styles.css" />
+</head>
+<body>
+
+<div class="topbar">
+  <div class="brand">ESC · Business English <strong>&nbsp;/&nbsp; Unit 5A</strong></div>
+  <button class="btn btn-ghost" id="teacherPortalBtn">Teacher Portal</button>
+</div>
+
+<div class="wrap">
+  <div class="hero">
+    <div class="eyebrow">Homework Assignment</div>
+    <h1>Narrative Past Tenses in the Workplace</h1>
+    <div class="meta">Instructor: <strong>Khaled Merbouche</strong> &nbsp;·&nbsp; Business &amp; Professional English (CEFR B1–B2)</div>
+    <div class="deadline-chip"><span class="dot"></span><span id="deadlineText">Deadline: Thursday at Midnight</span></div>
+
+    <div class="timeline-rail" aria-hidden="true">
+      <div class="timeline-node earlier">
+        <div class="dot"></div>
+        <div class="label">Earlier</div>
+        <div class="sub">Past Perfect</div>
+      </div>
+      <div class="timeline-line"></div>
+      <div class="timeline-node scene">
+        <div class="dot"></div>
+        <div class="label">Scene</div>
+        <div class="sub">Past Continuous</div>
+      </div>
+      <div class="timeline-line"></div>
+      <div class="timeline-node event">
+        <div class="dot"></div>
+        <div class="label">Event</div>
+        <div class="sub">Past Simple</div>
+      </div>
+    </div>
+  </div>
+
+  <div class="section">
+    <div class="section-head"><span class="section-num">01</span><h2>Choose the Correct Form</h2></div>
+    <div class="desc">Select the correct verb form from the options for each sentence.</div>
+    <div id="ex1List"></div>
+  </div>
+
+  <div class="section">
+    <div class="section-head"><span class="section-num">02</span><h2>Workplace Context</h2></div>
+    <div class="desc">Complete the sentences by putting the verbs in brackets into the correct narrative past tense.</div>
+    <div id="ex2List"></div>
+  </div>
+
+  <div class="section">
+    <div class="section-head"><span class="section-num">03</span><h2>Written Expression</h2></div>
+    <div class="desc" id="weInstructions">Write a paragraph or short workplace narrative (120–150 words)…</div>
+    <ul class="reqs" id="weReqs"></ul>
+    <textarea id="writtenExpression" placeholder="Write your narrative here…" rows="10"></textarea>
+    <div class="word-count" id="wordCount">0 words</div>
+  </div>
+
+  <div class="submit-bar">
+    <span class="autosave-note" id="autosaveNote">Draft saved automatically</span>
+    <span style="display:flex; gap:10px;">
+      <input type="text" id="studentName" placeholder="Your full name" style="max-width:200px;" />
+      <button class="btn btn-primary" id="submitBtn">Submit Homework</button>
+    </span>
+  </div>
+</div>
+
+<div class="modal-backdrop" id="teacherModal" style="display:none;">
+  <div class="modal">
+    <h3>Teacher Portal</h3>
+    <p>Enter the instructor password to open the dashboard.</p>
+    <input type="password" id="teacherPassword" placeholder="Password" />
+    <div class="row">
+      <button class="btn btn-ghost" id="closeModal">Cancel</button>
+      <button class="btn btn-primary" id="loginBtn">Enter</button>
+    </div>
+  </div>
+</div>
+
+<script src="app.js"></script>
+</body>
+</html>

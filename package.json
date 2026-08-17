@@ -1,0 +1,26 @@
+{
+  "name": "unit5a-narrative-past-portal",
+  "version": "1.0.0",
+  "description": "Homework portal for Unit 5A – Narrative Past Tenses in the Workplace (Khaled Merbouche, ESC / Business English B1-B2)",
+  "main": "server.js",
+  "type": "commonjs",
+  "scripts": {
+    "start": "node server.js",
+    "dev": "node server.js",
+    "initdb": "node src/db.js --init"
+  },
+  "dependencies": {
+    "express": "^4.19.2",
+    "pg": "^8.11.5",
+    "dotenv": "^16.4.5",
+    "bcryptjs": "^2.4.3",
+    "jsonwebtoken": "^9.0.2",
+    "pdfkit": "^0.15.0",
+    "nodemailer": "^6.9.13",
+    "helmet": "^7.1.0",
+    "express-rate-limit": "^7.2.0"
+  },
+  "engines": {
+    "node": ">=18.0.0"
+  }
+}

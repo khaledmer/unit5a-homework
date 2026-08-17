@@ -1,0 +1,60 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<title>Teacher Dashboard — Unit 5A</title>
+<link rel="stylesheet" href="styles.css" />
+</head>
+<body>
+
+<div class="topbar">
+  <div class="brand">ESC · Business English <strong>&nbsp;/&nbsp; Teacher Dashboard</strong></div>
+  <span style="display:flex; gap:10px;">
+    <button class="btn btn-ghost" id="answerKeyBtn">Download Answer Key</button>
+    <button class="btn btn-ghost" id="logoutBtn">Log Out</button>
+  </span>
+</div>
+
+<div class="dash-wrap">
+
+  <div class="settings-panel">
+    <div class="section-head" style="margin-bottom:14px;"><h2 style="font-size:16px;">Assignment Settings</h2></div>
+    <div class="row">
+      <label class="switch">
+        <input type="checkbox" id="timerToggle" />
+        <span class="slider"></span>
+      </label>
+      <span>Enable countdown timer for students</span>
+      <select id="timerMinutes" style="background:var(--surface-2); color:var(--text); border:1px solid var(--border); border-radius:6px; padding:6px 10px;">
+        <option value="20">20 min</option>
+        <option value="30">30 min</option>
+        <option value="45">45 min</option>
+      </select>
+    </div>
+    <div class="row">
+      <label style="font-size:13px; color:var(--muted);">Deadline text shown to students:</label>
+      <input type="text" id="deadlineTextInput" style="max-width:260px;" />
+      <button class="btn" id="saveSettingsBtn">Save Settings</button>
+    </div>
+  </div>
+
+  <div id="listView">
+    <div class="section-head" style="margin-bottom:14px;"><h2 style="font-size:16px;">Submissions</h2></div>
+    <table class="subs" id="subsTable">
+      <thead>
+        <tr>
+          <th>Student</th><th>Submitted</th><th>Words</th><th>Ex.1</th><th>Ex.2</th><th>Written</th><th>Status</th>
+        </tr>
+      </thead>
+      <tbody id="subsBody"></tbody>
+    </table>
+  </div>
+
+  <div id="detailView" style="display:none;"></div>
+
+</div>
+
+<script src="teacher.js"></script>
+</body>
+</html>
